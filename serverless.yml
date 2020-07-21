@@ -1,0 +1,28 @@
+service: serverlessvideo
+
+plugins:
+  - serverless-iam-roles-per-function
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  timeout: 10
+
+functions:
+  onVideoUpload:
+    handler: app/index.onVideoUpload
+    events:
+      - s3:videosplit
+    iamRoleStatements:
+      - Effect: "Allow",
+        Action:
+          - sqs:*
+          - cloudwatch:*
+          - events:*
+          - iam:GetPolicy
+          - iam:GetPolicyVersion
+          - iam:GetRole
+          - lambda:*
+          - logs:*
+          - s3:*
+          - sns:*
