@@ -30,6 +30,11 @@ functions:
           - s3:*
           - sns:*
         Resource: "*"
+  bootEc2Instance:
+    handler: app/index.bootEc2Instance
+    events:
+      - schedule:
+          rate: cron(*/2 * * * ? *)
 resources:
   Resources:
     Bucket:

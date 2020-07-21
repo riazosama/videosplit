@@ -27,3 +27,11 @@ module.exports.onVideoUpload = async event => {
   console.log(message);
 
 }
+
+module.exports.bootEc2Instance = async event => {
+  console.log("Insatance starting:", "dddd")
+  // const ec2 = new AWS.EC2({ region: event.instanceRegion });
+  // return ec2.startInstances({ InstanceIds: ["i-069c545e64b1ef74d"] }).promise()
+  //   .then(() => `Successfully Started i-069c545e64b1ef74d`)
+  //   .catch(err => console.log(err));
+}
