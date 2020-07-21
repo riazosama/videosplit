@@ -1,18 +1,19 @@
-service: serverlessvideo
-
+service: serverlessvideo1
 plugins:
   - serverless-iam-roles-per-function
-
 provider:
   name: aws
   runtime: nodejs12.x
   timeout: 10
-
+  region: us-east-2
 functions:
   onVideoUpload:
     handler: app/index.onVideoUpload
     events:
-      - s3:videosplit
+      - s3:
+          bucket: !Ref Bucket
+          event: s3:ObjectCreated:*
+          existing: true
     iamRoleStatements:
       - Effect: "Allow"
         Action:
@@ -27,3 +28,18 @@ functions:
           - s3:*
           - sns:*
         Resource: "*"
+resources:
+  Resources:
+    Bucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:service}-bucket
+        VersioningConfiguration:
+          Status: Enabled
+        CorsConfiguration:
+          CorsRules:
+            - AllowedHeaders: ['*']
+              AllowedMethods: [GET, PUT, POST]
+              AllowedOrigins: ['*']
+              Id: CORSRuleId1
+              MaxAge: '3600'
