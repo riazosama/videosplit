@@ -6,6 +6,8 @@ provider:
   runtime: nodejs12.x
   timeout: 10
   region: us-east-2
+  environment:
+    SQS_URL: !Ref SQS
 functions:
   onVideoUpload:
     handler: app/index.onVideoUpload
@@ -43,3 +45,8 @@ resources:
               AllowedOrigins: ['*']
               Id: CORSRuleId1
               MaxAge: '3600'
+    SQS:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:service}-sqs
+        

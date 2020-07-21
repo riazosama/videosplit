@@ -1,6 +1,6 @@
 var aws = require("aws-sdk");
 var sqs = new aws.SQS();
-var queueUrl = "https://sqs.us-east-2.amazonaws.com/506464813465/videosplit_sqs";
+var queueUrl = process.env.SQS_URL;
 
 module.exports.onVideoUpload = async event => {
 
