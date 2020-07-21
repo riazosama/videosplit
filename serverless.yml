@@ -14,7 +14,7 @@ functions:
     events:
       - s3:videosplit
     iamRoleStatements:
-      - Effect: "Allow",
+      - Effect: "Allow"
         Action:
           - sqs:*
           - cloudwatch:*
@@ -26,3 +26,4 @@ functions:
           - logs:*
           - s3:*
           - sns:*
+        Resource: "*"
