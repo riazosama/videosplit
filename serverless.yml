@@ -34,7 +34,7 @@ functions:
     handler: app/index.bootEc2Instance
     events:
       - schedule:
-          rate: cron(*/2 * * * ? *)
+          rate: cron(0 1/6 * * ? *)
 resources:
   Resources:
     Bucket:
