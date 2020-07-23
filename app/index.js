@@ -46,7 +46,7 @@ module.exports.onVideoUpload = async event => {
 
 module.exports.bootEc2Instance = async event => {
   console.log("Insatance starting:", "dddd")
-  const instance = new AWS.EC2({ region: event.instanceRegion });
+  const instance = new aws.EC2({ region: event.instanceRegion });
   try {
 
     const sqsMessage = await getMessageFromSQS();
@@ -56,7 +56,7 @@ module.exports.bootEc2Instance = async event => {
       console.log("Nothing in Queue. No need to start instance")
     }
 
-    await ec2.startInstances({ InstanceIds: ["i-0cdbc5787ca65c8ed"] }).promise();
+    await instance.startInstances({ InstanceIds: [process.env.INSTANCE] }).promise();
     console.log("Instance Started");
   } catch(e) {
     console.log(e)

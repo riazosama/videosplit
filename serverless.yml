@@ -1,13 +1,18 @@
 service: serverlessvideo1
+
 plugins:
   - serverless-iam-roles-per-function
+  - serverless-pseudo-parameters
+
 provider:
   name: aws
   runtime: nodejs12.x
   timeout: 10
+  profile: issacclausman
   region: us-east-2
   environment:
     SQS_URL: !Ref SQS
+    INSTANCE: "i-0cdbc5787ca65c8ed"
 functions:
   onVideoUpload:
     handler: app/index.onVideoUpload
@@ -17,24 +22,25 @@ functions:
           event: s3:ObjectCreated:*
           existing: true
     iamRoleStatements:
-      - Effect: "Allow"
+      - Effect: Allow
         Action:
-          - sqs:*
-          - cloudwatch:*
-          - events:*
-          - iam:GetPolicy
-          - iam:GetPolicyVersion
-          - iam:GetRole
-          - lambda:*
-          - logs:*
-          - s3:*
-          - sns:*
-        Resource: "*"
+          - sqs:SendMessage
+        Resource: [!GetAtt SQS.Arn]
   bootEc2Instance:
     handler: app/index.bootEc2Instance
     events:
       - schedule:
-          rate: cron(0 1/6 * * ? *)
+          rate: cron(*/2 * * * ? *)
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - sqs:ReceiveMessages
+        Resource: [!GetAtt SQS.Arn]
+      - Effect: Allow
+        Action:
+          - ec2:StartInstances
+        Resource:
+          - arn:#{AWS::Partition}:ec2:#{AWS::Region}:#{AWS::AccountId}:instance/i-0cdbc5787ca65c8ed
 resources:
   Resources:
     Bucket:
@@ -54,4 +60,3 @@ resources:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: ${self:service}-sqs
-        
