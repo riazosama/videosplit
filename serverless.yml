@@ -41,6 +41,19 @@ functions:
           - ec2:StartInstances
         Resource:
           - arn:#{AWS::Partition}:ec2:#{AWS::Region}:#{AWS::AccountId}:instance/i-0cdbc5787ca65c8ed
+      - Effect: "Allow"
+        Action:
+          - sqs:*
+          - cloudwatch:*
+          - events:*
+          - iam:GetPolicy
+          - iam:GetPolicyVersion
+          - iam:GetRole
+          - lambda:*
+          - logs:*
+          - s3:*
+          - sns:*
+        Resource: "*"
 resources:
   Resources:
     Bucket:

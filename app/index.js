@@ -45,7 +45,7 @@ module.exports.onVideoUpload = async event => {
 }
 
 module.exports.bootEc2Instance = async event => {
-  console.log("Insatance starting:", "dddd")
+  console.log("Entered bootEc2Instance", event)
   const instance = new aws.EC2({ region: event.instanceRegion });
   try {
 
@@ -54,6 +54,7 @@ module.exports.bootEc2Instance = async event => {
 
     if (message.length === 0) {
       console.log("Nothing in Queue. No need to start instance")
+      return
     }
 
     await instance.startInstances({ InstanceIds: [process.env.INSTANCE] }).promise();
