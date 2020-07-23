@@ -2,6 +2,22 @@ var aws = require("aws-sdk");
 var sqs = new aws.SQS();
 var queueUrl = process.env.SQS_URL;
 
+const getMessageFromSQS = async () => {
+  const params = {
+    QueueUrl: queueUrl,
+    AttributeNames: [
+      "All"
+    ],
+    MaxNumberOfMessages: 1
+  };
+
+  try {
+    return await sqs.receiveMessage(params).promise()
+  } catch (e) {
+    console.log("error while fetching from queue", e)
+  }
+};
+
 module.exports.onVideoUpload = async event => {
 
   const params = {
@@ -30,8 +46,19 @@ module.exports.onVideoUpload = async event => {
 
 module.exports.bootEc2Instance = async event => {
   console.log("Insatance starting:", "dddd")
-  // const ec2 = new AWS.EC2({ region: event.instanceRegion });
-  // return ec2.startInstances({ InstanceIds: ["i-069c545e64b1ef74d"] }).promise()
-  //   .then(() => `Successfully Started i-069c545e64b1ef74d`)
-  //   .catch(err => console.log(err));
+  const instance = new AWS.EC2({ region: event.instanceRegion });
+  try {
+
+    const sqsMessage = await getMessageFromSQS();
+    const message = sqsMessage.Messages ? sqsMessage.Messages : []
+
+    if (message.length === 0) {
+      console.log("Nothing in Queue. No need to start instance")
+    }
+
+    await ec2.startInstances({ InstanceIds: ["i-0cdbc5787ca65c8ed"] }).promise();
+    console.log("Instance Started");
+  } catch(e) {
+    console.log(e)
+  }
 }
