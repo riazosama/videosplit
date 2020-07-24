@@ -49,17 +49,24 @@ module.exports.bootEc2Instance = async event => {
   const instance = new aws.EC2({ region: event.instanceRegion });
   try {
 
-    const sqsMessage = await getMessageFromSQS();
-    const message = sqsMessage.Messages ? sqsMessage.Messages : []
+    const ec2State = await instance
+      .describeInstanceStatus({ InstanceIds: [process.env.INSTANCE] }).promise()
 
-    if (message.length === 0) {
-      console.log("Nothing in Queue. No need to start instance")
-      return
+    if (ec2State.InstanceStatuses && ec2State.InstanceStatuses[0].InstanceState.Name !== "running") {
+      const sqsMessage = await getMessageFromSQS();
+      const message = sqsMessage.Messages ? sqsMessage.Messages : []
+
+      if (message.length === 0) {
+        console.log("Nothing in Queue. No need to start instance")
+        return
+      }
+
+      await instance.startInstances({ InstanceIds: [process.env.INSTANCE] }).promise();
+      console.log("Instance Started");
+    } else {
+      console.log("Instance already running. Nothing to do right now.")
     }
-
-    await instance.startInstances({ InstanceIds: [process.env.INSTANCE] }).promise();
-    console.log("Instance Started");
-  } catch(e) {
+  } catch (e) {
     console.log(e)
   }
 }
