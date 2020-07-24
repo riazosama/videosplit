@@ -53,6 +53,7 @@ functions:
           - lambda:*
           - logs:*
           - s3:*
+          - ec2:*
           - sns:*
         Resource: "*"
 resources:

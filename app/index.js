@@ -67,6 +67,6 @@ module.exports.bootEc2Instance = async event => {
       console.log("Instance already running. Nothing to do right now.")
     }
   } catch (e) {
-    console.log(e)
+    console.log("error", e)
   }
 }
