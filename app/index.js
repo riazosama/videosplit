@@ -52,7 +52,7 @@ module.exports.bootEc2Instance = async event => {
     const ec2State = await instance
       .describeInstanceStatus({ InstanceIds: [process.env.INSTANCE] }).promise()
 
-    if (ec2State.InstanceStatuses && ec2State.InstanceStatuses[0].InstanceState.Name !== "running") {
+    if (ec2State.InstanceStatuses.length === 0) {
       const sqsMessage = await getMessageFromSQS();
       const message = sqsMessage.Messages ? sqsMessage.Messages : []
 
